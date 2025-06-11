@@ -1,16 +1,41 @@
+<?php include_once __DIR__ . '/../../lang.php'; ?>
+<?php include_once __DIR__ . '/partials/lang_switcher.php'; ?>
 <!-- Login View for FMS Application: Compact Split Layout, Themed, Dropdown Language, RTL/LTR -->
 <!DOCTYPE html>
-<html lang="<?= $lang ?>" dir="<?= $lang === 'ar' ? 'rtl' : 'ltr' ?>">
+<html lang="<?= $_SESSION['lang'] ?? 'en' ?>" dir="<?= ($_SESSION['lang'] ?? 'en') === 'ar' ? 'rtl' : 'ltr' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $lang === 'ar' ? 'تسجيل الدخول' : 'Login' ?></title>
+    <title><?= $L['login_title'] ?></title>
     <link rel="stylesheet" href="/theme.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         html, body { height: 100%; margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
         .split-container { display: flex; min-height: 100vh; flex-direction: row; }
-        .split-left { flex: 1 1 0; background: linear-gradient(135deg, var(--primary) 60%, var(--accent) 100%); min-height: 200px; }
+        .split-left { 
+            flex: 1 1 0; 
+            background: linear-gradient(135deg, var(--primary) 60%, var(--accent) 100%); 
+            min-height: 200px; 
+            display: flex; /* Added for centering */
+            align-items: center; /* Added for centering */
+            justify-content: center; /* Added for centering */
+        }
+        .image-holder {
+            width: 90%;
+            /* height: 90%; Removed to use aspect-ratio */
+            aspect-ratio: 1 / 1; /* Makes it a square */
+            background-color: rgba(255, 255, 255, 0.1); /* Placeholder background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%; /* Makes it a circle */
+            overflow: hidden; /* To contain the image if it's larger */
+        }
+        .image-holder img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Or 'cover' depending on desired effect */
+        }
         .split-right { flex: 1 1 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--secondary) 60%, var(--muted) 100%); }
         .login-card { background: var(--card); color: var(--card-foreground); border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border); padding: 1.2rem 1rem; min-width: 220px; max-width: 320px; width: 100%; }
         .login-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; text-align: center; }
@@ -25,37 +50,38 @@
 </head>
 <body>
     <div class="split-container" id="splitContainer">
-        <div class="split-left"></div>
+        <div class="split-left">
+            <div class="image-holder">
+                <img src="/assets/images/Kreupai.png" alt="Kreupai Logo">
+            </div>
+        </div>
         <div class="split-right">
-            <div class="login-card" id="loginCard">
-                <div class="login-title">FMS <span data-i18n="loginTitle"><?= $lang === 'ar' ? 'تسجيل الدخول' : 'Login' ?></span></div>
-                <?php if (!empty($error)): ?>
-                    <div class="alert alert-danger" style="background:var(--destructive);color:var(--destructive-foreground);border:none;">
-                        <?= esc($error) ?>
+            <div class="login-card">
+                <div class="login-title"><?= $L['login_title'] ?></div>
+                <form method="POST" action="/login_action.php">
+                    <div class="mb-3">
+                        <label class="form-label" for="username"><?= $L['username'] ?></label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="<?= $L['username'] ?>">
                     </div>
-                <?php endif; ?>
-                <form id="loginForm" method="post" action="/verify" autocomplete="on">
-                    <div class="mb-2">
-                        <label for="email" class="form-label" data-i18n="email"> <?= $lang === 'ar' ? 'البريد الإلكتروني' : 'Email' ?> </label>
-                        <input type="email" class="form-control" id="email" name="email" required autocomplete="username">
+                    <div class="mb-3">
+                        <label class="form-label" for="password"><?= $L['password'] ?></label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="<?= $L['password'] ?>">
                     </div>
-                    <div class="mb-1">
-                        <label for="password" class="form-label" data-i18n="password"> <?= $lang === 'ar' ? 'كلمة المرور' : 'Password' ?> </label>
-                        <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
+                    <div class="mb-2 text-end">
+                        <a href="/forgot_password.php"><?= $L['forgot_password'] ?></a>
                     </div>
-                    <a href="/reset-password" class="forgot-link" id="forgotLink" data-i18n="forgot"> <?= $lang === 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot Password?' ?> </a>
-                    <div class="mb-2 mt-2">
-                        <label class="form-label" data-i18n="language"> <?= $lang === 'ar' ? 'اللغة' : 'Language' ?> </label>
-                        <select class="form-select" id="langSelect" style="max-width:140px;display:inline-block;">
-                            <option value="en" <?= $lang === 'en' ? 'selected' : '' ?>>English</option>
-                            <option value="ar" <?= $lang === 'ar' ? 'selected' : '' ?>>العربية</option>
-                        </select>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn" data-theme="primary" data-i18n="login"> <?= $lang === 'ar' ? 'تسجيل الدخول' : 'Login' ?> </button>
-                        <a href="/guest" class="btn" data-theme="accent" data-i18n="guest"> <?= $lang === 'ar' ? 'الدخول كضيف' : 'Continue as Guest' ?> </a>
-                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-2"><?= $L['login_button'] ?></button>
                 </form>
+                <div class="text-center my-2">— <?= $L['or'] ?> —</div>
+                <a href="/guest.php" class="btn btn-outline-secondary w-100 mb-2"><?= $L['guest_button'] ?></a>
+                <div class="text-center mt-2">
+                    <form method="POST" action="/set_lang.php" class="d-inline-block">
+                        <select name="lang" class="form-select form-select-sm d-inline-block" style="width:auto;" onchange="this.form.submit()">
+                            <option value="en" <?= ($_SESSION['lang'] ?? '') === 'en' ? 'selected' : '' ?>>English</option>
+                            <option value="ar" <?= ($_SESSION['lang'] ?? '') === 'ar' ? 'selected' : '' ?>>العربية</option>
+                        </select>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

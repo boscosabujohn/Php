@@ -10,4 +10,9 @@ class Tenant extends Controller
         // Guest registration page placeholder
         return view('tenant');
     }
+    
+    public function management()
+    {
+        return view('tenants_management');
+    }
 }

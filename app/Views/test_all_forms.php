@@ -67,7 +67,7 @@
 
         <h4 class="mt-4 mb-3 text-warning">Workflow & Operations</h4>
         <ul>
-            <li><a href="/tenant_portal" class="btn btn-outline-warning w-100 mb-2">Tenant Portal</a></li>
+            <li><a href="/tenant_portal" class="btn btn-outline-warning w-100 mb-2">🏠 Tenant Portal (Maintenance Requests)</a></li>
             <li><a href="/workflow/escalations" class="btn btn-outline-warning w-100 mb-2">Workflow Escalations</a></li>
             <li><a href="/assignment/1" class="btn btn-outline-warning w-100 mb-2">Assignment (Sample)</a></li>
             <li><a href="/tenant_signature/1" class="btn btn-outline-warning w-100 mb-2">Tenant Signature (Sample)</a></li>
@@ -93,15 +93,15 @@
             <div class="row">
                 <div class="col-4">
                     <small class="text-success">✅ <strong>Working</strong></small><br>
-                    <small>• Login System<br>• Reset Password<br>• All Dashboards<br>• Management Pages<br>• Test Navigation</small>
+                    <small>• Login System<br>• Reset Password<br>• All Dashboards<br>• Management Pages<br>• Tenant Registration<br>• Tenant Portal</small>
                 </div>
                 <div class="col-4">
                     <small class="text-info">ℹ️ <strong>Available</strong></small><br>
-                    <small>• Mock Session Testing<br>• All CRUD Operations<br>• Workflow Escalations<br>• Multi-language Support</small>
+                    <small>• Mock Session Testing<br>• All CRUD Operations<br>• Workflow Escalations<br>• Multi-language Support<br>• Enhanced UI Components</small>
                 </div>
                 <div class="col-4">
                     <small class="text-warning">🔧 <strong>Next Steps</strong></small><br>
-                    <small>• Database Testing<br>• User Role Permissions<br>• Production Deployment</small>
+                    <small>• Database Integration<br>• API Endpoints<br>• Email Notifications<br>• Production Deployment</small>
                 </div>
             </div>
             <div class="mt-3 text-center">

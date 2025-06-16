@@ -59,3 +59,14 @@ $routes->get('technician_dashboard', 'Dashboard::technicianDashboard');
 
 // Test routes with mock session
 $routes->get('/test_login', 'Home::testLogin');
+$routes->get('/check_session', 'Home::checkSession');
+// CRUD Routes (universal)
+$routes->post('api/crud', 'FmsCrudController::handle');
+
+// Other Functional Routes
+$routes->post('api/assign-technician', 'FmsOtherController::assignTechnician');
+$routes->post('api/upload-attachment', 'FmsOtherController::uploadAttachment');
+$routes->post('api/submit-feedback', 'FmsOtherController::submitFeedback');
+$routes->get('api/request-log/(:num)', 'FmsOtherController::getRequestLog/$1');
+$routes->get('api/sla-summary', 'FmsOtherController::getSlaComplianceTrend');
+$routes->post('api/escalate-request', 'FmsOtherController::escalateRequest');

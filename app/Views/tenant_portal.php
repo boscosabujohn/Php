@@ -1,116 +1,263 @@
-<!-- Tenant Portal UI for Service Requests -->
+<!-- Enhanced Tenant Portal UI for Service Requests -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tenant Portal - Service Requests</title>
     <link rel="stylesheet" href="/theme.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
     <style>
-        body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
-        .dashboard-card { background: var(--card); color: var(--card-foreground); border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border); padding: 2rem 1.5rem; max-width: 800px; margin: 5vh auto; text-align: center; }
-        .dashboard-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.2rem; }
-        .form-section { background: var(--card); padding: 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow-md); margin-bottom: 1.5rem; }
-        .table th, .table td { vertical-align: middle; }
-        .file-drop { border: 2px dashed var(--border); border-radius: var(--radius); padding: 1rem; cursor: pointer; text-align: center; }
-        .progress { height: 1rem; }
+        body { 
+            background: var(--background); 
+            color: var(--foreground); 
+            font-family: var(--font-sans); 
+            padding-top: 2rem;
+        }
+        
+        .portal-header { 
+            background: linear-gradient(135deg, var(--primary) 0%, hsl(from var(--primary) h s calc(l - 15%)) 100%);
+            color: var(--primary-foreground); 
+            border-radius: calc(var(--radius) * 2); 
+            box-shadow: var(--shadow-xl); 
+            padding: 2rem; 
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .portal-title { 
+            font-size: 2rem; 
+            font-weight: 800; 
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+        
+        .portal-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+        
+        .tenant-info {
+            background: var(--muted);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .file-drop { 
+            border: 2px dashed var(--border); 
+            border-radius: var(--radius); 
+            padding: 1.5rem; 
+            cursor: pointer; 
+            text-align: center;
+            background: var(--muted);
+            transition: all 0.2s ease;
+        }
+        
+        .file-drop:hover {
+            border-color: var(--primary);
+            background: var(--accent);
+        }
+        
+        .progress { 
+            height: 1.2rem;
+            border-radius: var(--radius);
+        }
+        
+        .navbar-portal {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .logout-btn {
+            background: var(--destructive);
+            color: var(--destructive-foreground);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .logout-btn:hover {
+            background: hsl(from var(--destructive) h s calc(l - 10%));
+            color: var(--destructive-foreground);
+        }
+        
+        @media (max-width: 768px) {
+            .portal-header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .portal-title {
+                font-size: 1.75rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="dashboard-card">
-        <div class="dashboard-title">Welcome to the Tenant Portal</div>
-        <p>Here you can create and manage your service requests.</p>
-    </div>
-
-    <div class="container-fluid py-4" style="max-width:100vw;">
-        <h2 class="mb-4" style="font-size:1.4rem;">My Service Requests</h2>
-        <div class="card p-2 form-section" id="requestFormSection">
-            <h5 style="font-size:1.1rem;">New Maintenance Request</h5>
-            <form id="requestForm" autocomplete="off">
-                <div class="row g-2">
-                    <div class="col-md-4">
-                        <label class="form-label mb-1">Property <span class="text-danger">*</span></label>
-                        <select id="propertyId" class="form-select" required></select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label mb-1">Category <span class="text-danger">*</span></label>
-                        <select id="categoryId" class="form-select" required></select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label mb-1">Priority <span class="text-danger">*</span></label>
-                        <select id="priorityId" class="form-select" required></select>
-                    </div>
-                </div>
-                <div class="row g-2 mt-2">
-                    <div class="col-md-12">
-                        <label class="form-label mb-1">Description <span class="text-danger">*</span></label>
-                        <textarea id="description" class="form-control" rows="2" required></textarea>
-                    </div>
-                </div>
-                <div class="row g-2 mt-2">
-                    <div class="col-md-12">
-                        <label class="form-label mb-1">Attachments</label>
-                        <div class="file-drop" id="fileDrop">Drag & drop files here or click to select</div>
-                        <input type="file" id="attachments" multiple style="display:none;">
-                        <div id="fileList"></div>
-                        <div class="progress" id="uploadProgress" style="display:none;"><div class="progress-bar" role="progressbar" style="width:0%"></div></div>
-                    </div>
-                </div>
-                <div class="mt-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary" id="saveRequestBtn">Submit Request</button>
-                </div>
-                <div id="formMessage"></div>
-            </form>
+    <div class="container-fluid" style="max-width: 1200px;">
+        <!-- Navigation Bar -->
+        <div class="navbar-portal d-flex justify-content-between align-items-center">
+            <div>
+                <strong>🏠 Tenant Portal</strong>
+                <?php if (isset($tenant_name)): ?>
+                    <span class="text-muted">- Welcome, <?= esc($tenant_name) ?></span>
+                <?php endif; ?>
+            </div>
+            <div>
+                <?php if (isset($is_guest) && $is_guest): ?>
+                    <a href="/tenant/logout" class="logout-btn">Logout</a>
+                <?php endif; ?>
+            </div>
         </div>
-        <div class="card p-2 mt-4">
-            <div class="row g-2 align-items-center mb-2">
-                <div class="col-md-4">
-                    <input type="text" id="generalSearch" class="form-control" placeholder="Search requests..." style="font-size:1em;">
+        
+        <!-- Portal Header -->
+        <div class="portal-header">
+            <div class="portal-title">Maintenance Request Portal</div>
+            <div class="portal-subtitle">Submit and track your maintenance requests online</div>
+            
+            <?php if (isset($tenant_name, $flat_office_number)): ?>
+                <div class="tenant-info">
+                    <strong><?= esc($tenant_name) ?></strong> 
+                    <?php if ($flat_office_number): ?>
+                        • Unit: <?= esc($flat_office_number) ?>
+                    <?php endif; ?>
+                    <?php if (isset($tenant_email)): ?>
+                        • <?= esc($tenant_email) ?>
+                    <?php endif; ?>
                 </div>
-                <div class="col-md-8 text-end">
-                    <span id="tableMessage" class="text-success"></span>
-                </div>
+            <?php endif; ?>
+        </div>
+        <!-- New Maintenance Request Form -->
+        <div class="card-enhanced mb-4">
+            <div class="card-enhanced-header">
+                <h5 class="card-enhanced-title mb-0">🔧 Submit New Maintenance Request</h5>
             </div>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle" id="requestsTable" style="font-size:0.98em;">
-                    <thead>
-                        <tr>
-                            <th>Property</th>
-                            <th>Category</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Description</th>
-                            <th>Attachments</th>
-                            <th>Created</th>
-                            <th>Updated</th>
-                            <th style="width:110px;">Actions</th>
-                        </tr>
-                        <tr class="filter-row">
-                            <th><select class="form-select form-select-sm" id="filterProperty"></select></th>
-                            <th><select class="form-select form-select-sm" id="filterCategory"></select></th>
-                            <th><select class="form-select form-select-sm" id="filterPriority"></select></th>
-                            <th><select class="form-select form-select-sm" id="filterStatus"></select></th>
-                            <th></th><th></th><th></th><th></th><th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="requestsTbody">
-                        <!-- Data will be loaded here -->
-                    </tbody>
-                </table>
+            <div class="card-enhanced-content">
+                <form id="requestForm" class="form-enhanced" autocomplete="off">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Property <span class="text-danger">*</span></label>
+                            <select id="propertyId" class="form-control" required></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Category <span class="text-danger">*</span></label>
+                            <select id="categoryId" class="form-control" required></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Priority <span class="text-danger">*</span></label>
+                            <select id="priorityId" class="form-control" required></select>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-12">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea id="description" class="form-control" rows="3" required placeholder="Please describe the maintenance issue in detail..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-12">
+                            <label class="form-label">Attachments</label>
+                            <div class="file-drop" id="fileDrop">
+                                📁 Drag & drop files here or click to select photos/documents
+                            </div>
+                            <input type="file" id="attachments" multiple accept="image/*,.pdf,.doc,.docx" style="display:none;">
+                            <div id="fileList" class="mt-2"></div>
+                            <div class="progress mt-2" id="uploadProgress" style="display:none;">
+                                <div class="progress-bar" role="progressbar" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 d-flex gap-3">
+                        <button type="submit" class="btn-enhanced btn-primary-enhanced" id="saveRequestBtn">
+                            📤 Submit Request
+                        </button>
+                        <button type="button" class="btn-enhanced btn-outline-enhanced" onclick="document.getElementById('requestForm').reset();">
+                            🗑️ Clear Form
+                        </button>
+                    </div>
+                    
+                    <div id="formMessage" class="mt-3"></div>
+                </form>
             </div>
-            <div class="d-flex justify-content-between align-items-center mt-2">
-                <div>
-                    <label>Show <select id="recordsPerPage" class="form-select form-select-sm d-inline-block" style="width:auto;">
-                        <option value="5">5</option>
-                        <option value="10" selected>10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                    </select> entries</label>
+        </div>
+        <!-- My Service Requests Table -->
+        <div class="card-enhanced">
+            <div class="card-enhanced-header">
+                <h5 class="card-enhanced-title mb-0">📋 My Service Requests</h5>
+            </div>
+            <div class="card-enhanced-content p-0">
+                <!-- Search and Filters -->
+                <div class="p-3 border-bottom">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-6">
+                            <input type="text" id="generalSearch" class="form-control" placeholder="🔍 Search requests..." style="font-size:1em;">
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <span id="tableMessage" class="text-success"></span>
+                        </div>
+                    </div>
                 </div>
-                <nav>
-                    <ul class="pagination pagination-sm mb-0" id="pagination"></ul>
-                </nav>
+                
+                <!-- Requests Table -->
+                <div class="table-responsive">
+                    <table class="table-enhanced" id="requestsTable">
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                                <th>Attachments</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th style="width:110px;">Actions</th>
+                            </tr>
+                            <tr class="filter-row">
+                                <th><select class="form-control form-control-sm" id="filterProperty"></select></th>
+                                <th><select class="form-control form-control-sm" id="filterCategory"></select></th>
+                                <th><select class="form-control form-control-sm" id="filterPriority"></select></th>
+                                <th><select class="form-control form-control-sm" id="filterStatus"></select></th>
+                                <th></th><th></th><th></th><th></th><th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTbody">
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    Loading your requests...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="d-flex justify-content-between align-items-center p-3 border-top">
+                    <div>
+                        <label class="text-muted">Show 
+                            <select id="recordsPerPage" class="form-select form-select-sm d-inline-block mx-1" style="width:auto;">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select> entries
+                        </label>
+                    </div>
+                    <nav>
+                        <ul class="pagination pagination-enhanced pagination-sm mb-0" id="pagination"></ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
@@ -329,8 +476,20 @@
         }
 
         function showAlert(message, type) {
-            // Generic alert function
-            $('#formMessage').html(`<div class="alert alert-${type}">${message}</div>`);
+            const alertHtml = `
+                <div class="alert alert-${type} alert-enhanced alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            $('#formMessage').html(alertHtml);
+            
+            // Auto-dismiss success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    $('.alert').alert('close');
+                }, 5000);
+            }
         }
 
         function editRequest(requestId) {

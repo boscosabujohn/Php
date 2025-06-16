@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AJAX Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Testing Properties CRUD API</h1>
+    <div id="results"></div>
+    
+    <script>
+    $(document).ready(function() {
+        console.log('Testing AJAX calls...');
+        
+        // Test loading properties
+        $.ajax({
+            url: '/api/crud/filter',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                table: 'properties',
+                filters: {}
+            }),
+            success: function(response) {
+                console.log('Properties loaded:', response);
+                $('#results').append('<p>✅ Load Properties: Success - ' + response.data.length + ' records</p>');
+                
+                // Test creating a property
+                testCreate();
+            },
+            error: function(xhr, status, error) {
+                console.error('Load error:', error);
+                $('#results').append('<p>❌ Load Properties: Failed - ' + error + '</p>');
+            }
+        });
+        
+        function testCreate() {
+            $.ajax({
+                url: '/api/crud/create',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    table: 'properties',
+                    data: {
+                        name: 'Test UI Property',
+                        building_number: 'T001',
+                        address: 'Test Address 123'
+                    }
+                }),
+                success: function(response) {
+                    console.log('Property created:', response);
+                    $('#results').append('<p>✅ Create Property: Success</p>');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Create error:', error);
+                    $('#results').append('<p>❌ Create Property: Failed - ' + error + '</p>');
+                }
+            });
+        }
+    });
+    </script>
+</body>
+</html>

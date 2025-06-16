@@ -48,8 +48,8 @@ class Auth extends Controller
                 'status' => $user['status_name'] ?? null,
                 'language' => $lang,
             ]);
-            // Use route, not .php file, for redirect
-            return redirect()->to(base_url('tenants_management'));
+            // Redirect to test_all_forms after login
+            return redirect()->to(base_url('test_all_forms'));
         }
 
         $session->setFlashdata('error', $lang === 'ar' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة' : 'Invalid email or password');

@@ -6,6 +6,12 @@ use App\Libraries\WorkflowAutomation;
 
 class WorkflowController extends Controller
 {
+    public function index()
+    {
+        // Workflow escalations management page
+        return view('workflow_escalations');
+    }
+
     public function runEscalations()
     {
         $workflow = new WorkflowAutomation();

@@ -18,4 +18,9 @@ class UserController extends ResourceController
         }
         return $this->failUnauthorized('Invalid credentials');
     }
+
+    public function management()
+    {
+        return view('users_management');
+    }
 }

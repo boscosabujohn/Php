@@ -1,49 +1,124 @@
-\
 <?php
 
-namespace App\\Models;
+namespace App\Models;
 
-use CodeIgniter\\Model;
+use CodeIgniter\Model;
 
 class TenantModel extends Model
 {
+    protected $table = 'fms_tenants';
+    protected $primaryKey = 'id';
+    protected $allowedFields = ['name', 'property_id', 'flat_office_number', 'email', 'address', 'created_by', 'updated_by'];
+    protected $useTimestamps = true;
+    protected $createdField = 'created_at';
+    protected $updatedField = 'updated_at';
     protected $db;
 
     public function __construct()
     {
         parent::__construct();
-        $this->db = \\Config\\Database::connect();
+        $this->db = \Config\Database::connect();
     }
 
     /**
-     * Calls the fms_tenants_create stored procedure.
+     * Create a new tenant using stored procedure if available, otherwise use direct insert
      */
     public function createTenant(array $data): bool
     {
-        $sql = 'CALL fms_tenants_create(?, ?, ?, ?, ?, ?)';
         try {
+            // Try using stored procedure first
+            $sql = 'CALL fms_tenants_create(?, ?, ?, ?, ?, ?)';
             $this->db->query($sql, [
                 $data['name'],
                 $data['property_id'],
                 $data['flat_office_number'],
                 $data['email'],
                 $data['address'],
-                $data['created_by'] ?? null // Assuming created_by comes from session or is passed
+                $data['created_by'] ?? null
             ]);
             return $this->db->affectedRows() > 0;
-        } catch (\\Throwable $e) {
-            log_message('error', '[TenantModel] Error creating tenant: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            // Fallback to direct insert if stored procedure doesn't exist
+            log_message('info', '[TenantModel] Stored procedure not available, using direct insert: ' . $e->getMessage());
+            return $this->insert($data) !== false;
+        }
+    }
+
+    /**
+     * Create a tenant contact record
+     */
+    public function createTenantContact(array $contactData): bool
+    {
+        try {
+            $builder = $this->db->table('fms_tenant_contacts');
+            return $builder->insert($contactData);
+        } catch (\Throwable $e) {
+            log_message('error', '[TenantModel] Error creating tenant contact: ' . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Calls the fms_tenants_update stored procedure.
+     * Get tenant by email and phone verification
+     */
+    public function getTenantByEmailAndPhone(string $email, string $phone): ?array
+    {
+        try {
+            $sql = "
+                SELECT t.*, c.phone_number
+                FROM fms_tenants t
+                INNER JOIN fms_tenant_contacts c ON t.id = c.tenant_id
+                WHERE t.email = ? AND c.phone_number = ? AND c.is_primary = 1
+                LIMIT 1
+            ";
+            
+            $query = $this->db->query($sql, [$email, $phone]);
+            $result = $query->getRowArray();
+            
+            return $result ?: null;
+        } catch (\Throwable $e) {
+            log_message('error', '[TenantModel] Error getting tenant by email and phone: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get tenant with contacts
+     */
+    public function getTenantWithContacts(int $tenantId): ?array
+    {
+        try {
+            // Get tenant info
+            $tenant = $this->find($tenantId);
+            if (!$tenant) {
+                return null;
+            }
+            
+            // Convert to array if needed
+            $tenantArray = is_array($tenant) ? $tenant : $tenant->toArray();
+            
+            // Get contacts
+            $contacts = $this->db->table('fms_tenant_contacts')
+                               ->where('tenant_id', $tenantId)
+                               ->get()
+                               ->getResultArray();
+            
+            $tenantArray['contacts'] = $contacts;
+            return $tenantArray;
+        } catch (\Throwable $e) {
+            log_message('error', '[TenantModel] Error getting tenant with contacts: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Update tenant using stored procedure if available
      */
     public function updateTenant(int $id, array $data): bool
     {
-        $sql = 'CALL fms_tenants_update(?, ?, ?, ?, ?, ?, ?)';
         try {
+            // Try using stored procedure first
+            $sql = 'CALL fms_tenants_update(?, ?, ?, ?, ?, ?, ?)';
             $this->db->query($sql, [
                 $id,
                 $data['name'],
@@ -51,39 +126,41 @@ class TenantModel extends Model
                 $data['flat_office_number'],
                 $data['email'],
                 $data['address'],
-                $data['updated_by'] ?? null // Assuming updated_by comes from session or is passed
+                $data['updated_by'] ?? null
             ]);
             return $this->db->affectedRows() > 0;
-        } catch (\\Throwable $e) {
-            log_message('error', '[TenantModel] Error updating tenant ID ' . $id . ': ' . $e->getMessage());
-            return false;
+        } catch (\Throwable $e) {
+            // Fallback to direct update
+            log_message('info', '[TenantModel] Stored procedure not available, using direct update: ' . $e->getMessage());
+            return $this->update($id, $data);
         }
     }
 
     /**
-     * Calls the fms_tenants_delete stored procedure.
+     * Delete tenant using stored procedure if available
      */
     public function deleteTenant(int $id): bool
     {
-        $sql = 'CALL fms_tenants_delete(?)';
         try {
+            // Try using stored procedure first
+            $sql = 'CALL fms_tenants_delete(?)';
             $this->db->query($sql, [$id]);
             return $this->db->affectedRows() > 0;
-        } catch (\\Throwable $e) {
-            log_message('error', '[TenantModel] Error deleting tenant ID ' . $id . ': ' . $e->getMessage());
-            return false;
+        } catch (\Throwable $e) {
+            // Fallback to direct delete
+            log_message('info', '[TenantModel] Stored procedure not available, using direct delete: ' . $e->getMessage());
+            return $this->delete($id);
         }
     }
 
     /**
-     * Calls the fms_tenants_filter stored procedure.
-     * Parameters should match the stored procedure definition.
+     * Filter tenants with optional stored procedure
      */
     public function filterTenants(array $filters = []): array
     {
-        // p_id, p_name, p_property_id, p_flat_office_number, p_email, p_address, p_building_name, p_building_number
-        $sql = 'CALL fms_tenants_filter(?, ?, ?, ?, ?, ?, ?, ?)';
         try {
+            // Try using stored procedure first
+            $sql = 'CALL fms_tenants_filter(?, ?, ?, ?, ?, ?, ?, ?)';
             $query = $this->db->query($sql, [
                 $filters['id'] ?? null,
                 $filters['name'] ?? null,
@@ -95,54 +172,64 @@ class TenantModel extends Model
                 $filters['building_number'] ?? null,
             ]);
             return $query->getResultArray();
-        } catch (\\Throwable $e) {
-            log_message('error', '[TenantModel] Error filtering tenants: ' . $e->getMessage());
-            return [];
+        } catch (\Throwable $e) {
+            // Fallback to manual filtering
+            log_message('info', '[TenantModel] Stored procedure not available, using manual filter: ' . $e->getMessage());
+            
+            $builder = $this->builder();
+            
+            if (!empty($filters['id'])) {
+                $builder->where('id', $filters['id']);
+            }
+            if (!empty($filters['name'])) {
+                $builder->like('name', $filters['name']);
+            }
+            if (!empty($filters['property_id'])) {
+                $builder->where('property_id', $filters['property_id']);
+            }
+            if (!empty($filters['flat_office_number'])) {
+                $builder->like('flat_office_number', $filters['flat_office_number']);
+            }
+            if (!empty($filters['email'])) {
+                $builder->like('email', $filters['email']);
+            }
+            if (!empty($filters['address'])) {
+                $builder->like('address', $filters['address']);
+            }
+            
+            return $builder->get()->getResultArray();
         }
     }
 
     /**
-     * Fetches properties for the combobox.
-     * Assumes a stored procedure fms_properties_filter_for_select exists.
-     * This SP should accept a search term and return id, name (building_name), building_number.
+     * Get properties for select dropdown
      */
     public function getPropertiesForSelect(string $searchTerm = null): array
     {
-        // Example: CALL fms_properties_filter_for_select(?);
-        // You'll need to create this stored procedure in your database.
-        // It should return id, name (as building_name), building_number
-        $sql = 'CALL fms_properties_filter_for_select(?)'; // Modify if your SP is different
         try {
-            // For now, let's assume a simple properties table direct query if SP is not ready
-            // Replace this with your actual SP call
-            if (empty($searchTerm)) {
-                 $query = $this->db->table('fms_properties')->select('id, name as building_name, building_number')->get();
-            } else {
-                 $query = $this->db->table('fms_properties')
-                                   ->select('id, name as building_name, building_number')
-                                   ->like('name', $searchTerm)
-                                   ->orLike('building_number', $searchTerm)
-                                   ->get();
-            }
-            return $query->getResultArray();
+            $builder = $this->db->table('fms_properties')
+                               ->select('id, name as building_name, building_number');
             
-            // Ideal implementation with a stored procedure:
-            // $query = $this->db->query($sql, [$searchTerm]);
-            // return $query->getResultArray();
-
-        } catch (\\Throwable $e) {
+            if (!empty($searchTerm)) {
+                $builder->groupStart()
+                       ->like('name', $searchTerm)
+                       ->orLike('building_number', $searchTerm)
+                       ->groupEnd();
+            }
+            
+            return $builder->get()->getResultArray();
+        } catch (\Throwable $e) {
             log_message('error', '[TenantModel] Error fetching properties for select: ' . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Checks if an email already exists for a different tenant.
-     * Returns true if email exists for another tenant, false otherwise.
+     * Check if email is unique
      */
     public function isEmailUnique(string $email, int $excludeTenantId = null): bool
     {
-        $builder = $this->db->table('fms_tenants')->where('email', $email);
+        $builder = $this->where('email', $email);
         if ($excludeTenantId !== null) {
             $builder->where('id !=', $excludeTenantId);
         }

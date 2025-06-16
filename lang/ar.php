@@ -100,4 +100,11 @@ return [
     'error_deleting_permission' => 'حدث خطأ أثناء حذف الإذن.',
     'all_required_fields' => 'يجب تعبئة جميع الحقول المطلوبة.',
     'role_already_has_permission' => 'هذا الدور لديه بالفعل أذونات لهذا المسار.',
+    'login_title' => 'تسجيل الدخول',
+    'username' => 'اسم المستخدم',
+    'password' => 'كلمة المرور',
+    'forgot_password' => 'هل نسيت كلمة المرور؟',
+    'login_button' => 'تسجيل الدخول',
+    'or' => 'أو',
+    'guest_button' => 'الدخول كضيف',
 ];

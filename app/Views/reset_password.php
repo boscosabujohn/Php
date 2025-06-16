@@ -1,21 +1,158 @@
+<?php include_once __DIR__ . '/../../lang.php'; ?>
 <!-- Password Reset View for FMS Application: Styled to match login page -->
 <!DOCTYPE html>
-<html lang="<?= $lang ?? 'en' ?>" dir="<?= ($lang ?? 'en') === 'ar' ? 'rtl' : 'ltr' ?>">
+<html lang="<?= $_SESSION['lang'] ?? 'en' ?>" dir="<?= ($_SESSION['lang'] ?? 'en') === 'ar' ? 'rtl' : 'ltr' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= ($lang ?? 'en') === 'ar' ? 'تحديث كلمة المرور' : 'Update Password' ?></title>
+    <title><?= $L['reset_password_form_title'] ?? 'Update Password' ?></title>
     <link rel="stylesheet" href="/theme.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        html, body { height: 100%; margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
-        .reset-card { background: var(--card); color: var(--card-foreground); border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border); padding: 1.2rem 1rem; min-width: 220px; max-width: 320px; width: 100%; margin: 0 auto; }
-        .reset-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; text-align: center; }
-        .form-label, .form-control { font-family: var(--font-sans); font-size: 1em; }
-        .btn { border-radius: var(--radius) !important; box-shadow: var(--shadow-xs); font-family: var(--font-sans); border: none; font-size: 1em; padding: 0.5em 0.8em; }
-        .btn[data-theme="primary"] { background: var(--primary) !important; color: var(--primary-foreground) !important; }
-        .alert { margin-top: 0.7em; font-size: 0.95em; border-radius: var(--radius); }
-        @media (max-width: 900px) { .reset-card { min-width: 100px; max-width: 98vw; } }
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            background: linear-gradient(135deg, var(--primary) 0%, hsl(from var(--primary) h s calc(l - 15%)) 100%);
+            color: var(--foreground); 
+            font-family: var(--font-sans); 
+        }
+        
+        .reset-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .reset-card { 
+            background: var(--card); 
+            color: var(--card-foreground); 
+            border-radius: calc(var(--radius) * 2); 
+            box-shadow: var(--shadow-2xl); 
+            border: 1px solid var(--border); 
+            padding: 2.5rem 2rem; 
+            width: 100%; 
+            max-width: 420px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .reset-title { 
+            font-size: 1.75rem; 
+            font-weight: 800; 
+            margin-bottom: 0.5rem; 
+            text-align: center; 
+            color: var(--foreground);
+            letter-spacing: -0.025em;
+        }
+        
+        .reset-subtitle {
+            text-align: center;
+            color: var(--muted-foreground);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label { 
+            font-family: var(--font-sans); 
+            font-size: 0.875rem; 
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-control { 
+            font-family: var(--font-sans); 
+            font-size: 1rem;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--foreground);
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px hsl(from var(--primary) h s l / 0.1);
+            outline: none;
+        }
+        
+        .btn { 
+            border-radius: var(--radius) !important; 
+            box-shadow: var(--shadow-md); 
+            font-family: var(--font-sans); 
+            border: none; 
+            font-size: 1rem; 
+            font-weight: 600;
+            padding: 0.875rem 1.5rem;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .btn[data-theme="primary"] { 
+            background: var(--primary) !important; 
+            color: var(--primary-foreground) !important; 
+        }
+        
+        .btn[data-theme="primary"]:hover {
+            background: hsl(from var(--primary) h s calc(l - 10%)) !important;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .alert { 
+            margin-bottom: 1.5rem; 
+            font-size: 0.875rem; 
+            border-radius: var(--radius);
+            padding: 1rem 1.25rem;
+            border: none;
+        }
+        
+        .alert-success {
+            background: hsl(142 76% 96%);
+            color: hsl(142 76% 16%);
+        }
+        
+        .alert-danger {
+            background: hsl(0 84% 96%);
+            color: hsl(0 84% 16%);
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .login-link a:hover {
+            color: hsl(from var(--primary) h s calc(l - 10%));
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 480px) { 
+            .reset-card { 
+                padding: 1.5rem 1rem;
+                margin: 0.5rem;
+            }
+            .reset-title {
+                font-size: 1.5rem;
+            }
+        }
         <?php if (getenv('CI_ENVIRONMENT') && getenv('CI_ENVIRONMENT') !== 'production'): ?>
         /* Debug Panel Styles */
         .debug-panel { position:fixed; left:0; right:0; bottom:0; z-index:9999; background:var(--card); color:var(--card-foreground); border-radius:var(--radius) var(--radius) 0 0; box-shadow:var(--shadow-md); font-family:var(--font-sans); font-size:1em; padding:0.7em 1em 1.5em 1em; max-height:40vh; overflow-y:auto; }
@@ -27,33 +164,56 @@
     </style>
 </head>
 <body>
-    <div class="d-flex align-items-center justify-content-center" style="min-height:100vh;">
+    <div class="reset-container">
         <div class="reset-card">
-            <div class="reset-title"> <?= ($lang ?? 'en') === 'ar' ? 'تحديث كلمة المرور' : 'Update Password' ?> </div>
+            <div class="reset-title">Update Password</div>
+            <div class="reset-subtitle">Enter your email and new password to update your account</div>
+            
             <?php if (!empty($error)): ?>
-                <div class="alert alert-danger" style="background:var(--destructive);color:var(--destructive-foreground);border:none;"> <?= esc($error) ?> </div>
+                <div class="alert alert-danger"> 
+                    <?= esc($L[$error] ?? $error) ?> 
+                </div>
             <?php endif; ?>
+            
             <?php if (!empty($success)): ?>
-                <div class="alert alert-success" style="background:var(--success);color:var(--success-foreground);border:none;text-align:center;"> <?= esc($success) ?> </div>
-                <div class="d-grid gap-2 mt-2 mb-2">
-                    <button class="btn" data-theme="primary" onclick="window.location.href='/login'">Go to Login</button>
+                <div class="alert alert-success"> 
+                    <?= esc($L[$success] ?? $success) ?> 
+                </div>
+                <div class="login-link">
+                    <a href="/login">Return to Login</a>
+                </div>
+            <?php else: ?>
+                <form id="resetForm" method="post" action="/reset-password" autocomplete="off">
+                    <div class="form-group">
+                        <label for="email" class="form-label"> 
+                            <?= $L['label_email'] ?? 'Email' ?> 
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label"> 
+                            <?= $L['label_new_password'] ?? 'New Password' ?> 
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm_password" class="form-label"> 
+                            <?= $L['label_confirm_password'] ?? 'Confirm Password' ?> 
+                        </label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn w-100" data-theme="primary" id="updateBtn"> 
+                        <?= $L['label_save'] ?? 'Update Password' ?> 
+                    </button>
+                </form>
+                
+                <div class="login-link">
+                    <a href="/login">Back to Login</a>
                 </div>
             <?php endif; ?>
-            <form id="resetForm" method="post" action="" autocomplete="off">
-                <div class="mb-3">
-                    <label for="email" class="form-label"> <?= ($lang ?? 'en') === 'ar' ? 'البريد الإلكتروني' : 'Email' ?> </label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label"> <?= ($lang ?? 'en') === 'ar' ? 'كلمة المرور الجديدة' : 'New Password' ?> </label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
-                <div class="mb-3">
-                    <label for="confirm_password" class="form-label"> <?= ($lang ?? 'en') === 'ar' ? 'تأكيد كلمة المرور' : 'Confirm Password' ?> </label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                </div>
-                <button type="submit" class="btn w-100" data-theme="primary" id="updateBtn"> <?= ($lang ?? 'en') === 'ar' ? 'تحديث' : 'Update' ?> </button>
-            </form>
         </div>
     </div>
     <?php
@@ -135,7 +295,12 @@ function showMessage(msg, type) {
     alert.style.border = 'none';
     resetForm.before(alert);
   }
-  alert.innerHTML = msg;
+  // Use language resource for error/success messages
+  if (window.L && window.L[msg]) {
+    alert.innerHTML = window.L[msg];
+  } else {
+    alert.innerHTML = msg;
+  }
   alert.style.display = '';
 }
 function hideMessage() {
@@ -150,6 +315,7 @@ passwordInput.oninput = confirmInput.oninput = function() {
 };
 resetForm.onsubmit = async function(e) {
   e.preventDefault();
+  showMessage('processing', 'info');
   addDebugLog('Form submitted', 'OK');
   const email = emailInput.value.trim();
   const password = passwordInput.value;
@@ -171,16 +337,22 @@ resetForm.onsubmit = async function(e) {
     const data = await res.json();
     addDebugLog('API response: ' + JSON.stringify(data), data.status === 'ok' ? 'OK' : 'ERROR');
     if (data.status === 'ok') {
-      showMessage('Password updated successfully', 'success');
+      showMessage('password_updated_success', 'success');
       addDebugLog('Database updated successfully', 'OK');
-      setTimeout(() => { window.location.href = 'login.php'; }, 2000);
+      setTimeout(() => {
+        // Show a message before redirect
+        alert('Password updated successfully. Redirecting to login...');
+        window.location.href = '/login';
+      }, 2000);
     } else {
-      showMessage(data.message || 'Failed to update password', 'error');
+      showMessage(data.message || 'password_update_failed', 'error');
       updateBtn.disabled = false;
+      // Show debug info if failed
+      alert('Password update failed. Debug: ' + JSON.stringify(data));
     }
   } catch (err) {
     addDebugLog('AJAX error: ' + err, 'ERROR');
-    showMessage('An error occurred while processing your request. Please try again or contact support.', 'error');
+    showMessage('ajax_error', 'error');
     updateBtn.disabled = false;
   }
 };

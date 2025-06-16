@@ -27,46 +27,59 @@
 <body>
 <div class="container-fluid py-4" style="max-width:100vw;">
     <h2 class="mb-4" style="font-size:1.4rem;">Technician Skills Management</h2>
-    <div class="card p-2 mb-3">
-        <div class="row g-2 align-items-center mb-2">
-            <div class="col-md-4">
-                <input type="text" id="generalSearch" class="form-control" placeholder="Search skills..." style="font-size:1em;">
+    <div class="card-enhanced p-3 mb-4">
+        <div class="card-enhanced-header mb-3">
+            <h5 class="card-enhanced-title mb-0">Search & Filter Skills</h5>
+        </div>
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <input type="text" id="generalSearch" class="form-control" placeholder="Search skills...">
             </div>
-            <div class="col-md-8 text-end">
+            <div class="col-md-6 text-end">
                 <span id="tableMessage" class="text-success"></span>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle" id="skillsTable" style="font-size:0.98em;">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th style="width:110px;">Actions</th>
-                    </tr>
-                    <tr class="filter-row">
-                        <th><input type="text" class="form-control form-control-sm" id="filterId" placeholder="Filter ID"></th>
-                        <th><input type="text" class="form-control form-control-sm" id="filterName" placeholder="Filter name"></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="skillsTbody">
-                    <!-- Data will be loaded here -->
-                </tbody>
-            </table>
+    </div>
+    
+    <div class="card-enhanced">
+        <div class="card-enhanced-header">
+            <h5 class="card-enhanced-title mb-0">Skills Directory</h5>
         </div>
-        <div class="d-flex justify-content-between align-items-center mt-2">
-            <div>
-                <label>Show <select id="recordsPerPage" class="form-select form-select-sm d-inline-block" style="width:auto;">
-                    <option value="5">5</option>
-                    <option value="10" selected>10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                </select> entries</label>
+        <div class="card-enhanced-content p-0">
+            <div class="table-responsive">
+                <table class="table-enhanced" id="skillsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th style="width:110px;">Actions</th>
+                        </tr>
+                        <tr class="filter-row">
+                            <th><input type="text" class="form-control form-control-sm" id="filterId" placeholder="Filter ID"></th>
+                            <th><input type="text" class="form-control form-control-sm" id="filterName" placeholder="Filter name"></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="skillsTbody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
             </div>
-            <nav>
-                <ul class="pagination pagination-sm mb-0" id="pagination"></ul>
-            </nav>
+            <div class="d-flex justify-content-between align-items-center p-3 border-top">
+                <div>
+                    <label class="text-muted">Show 
+                        <select id="recordsPerPage" class="form-select form-select-sm d-inline-block mx-1" style="width:auto;">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select> entries
+                    </label>
+                </div>
+                <nav>
+                    <ul class="pagination pagination-enhanced pagination-sm mb-0" id="pagination"></ul>
+                </nav>
+            </div>
         </div>
     </div>
     <div class="card p-2 form-section" id="skillFormSection">

@@ -16,7 +16,7 @@ class FmsCrudController extends ResourceController
         return $this->respond($result);
     }
 
-    public function update()
+    public function update($id = null)
     {
         $input = $this->request->getJSON(true) ?? $this->request->getPost();
         $table = $input['table'] ?? '';
@@ -26,7 +26,7 @@ class FmsCrudController extends ResourceController
         return $this->respond($result);
     }
 
-    public function delete()
+    public function delete($id = null)
     {
         $input = $this->request->getJSON(true) ?? $this->request->getPost();
         $table = $input['table'] ?? '';
@@ -44,5 +44,31 @@ class FmsCrudController extends ResourceController
         $model = new FmsCrudModel();
         $result = $model->callCrudProcedure($table, 'filter', $filters);
         return $this->respond($result);
+    }
+
+    // Management page methods
+    public function propertiesManagement()
+    {
+        return view('properties_management');
+    }
+
+    public function lookupTypesManagement()
+    {
+        return view('lookup_types_management');
+    }
+
+    public function lookupTypesValuesManagement()
+    {
+        return view('lookup_types_values_management');
+    }
+
+    public function teamsManagement()
+    {
+        return view('teams_management');
+    }
+
+    public function technicianSkillsManagement()
+    {
+        return view('technician_skills_management');
     }
 }

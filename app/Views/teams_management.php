@@ -29,77 +29,90 @@
 <body>
 <div class="container-fluid py-4" style="max-width:100vw;">
     <h2 class="mb-4" style="font-size:1.4rem;">Teams Management</h2>
-    <div class="card p-2 mb-3">
-        <div class="row g-2 align-items-center mb-2">
-            <div class="col-md-4">
-                <input type="text" id="generalSearch" class="form-control" placeholder="Search teams..." style="font-size:1em;">
+    <div class="card-enhanced p-3 mb-4">
+        <div class="card-enhanced-header mb-3">
+            <h5 class="card-enhanced-title mb-0">Search & Filter Teams</h5>
+        </div>
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <input type="text" id="generalSearch" class="form-control" placeholder="Search teams...">
             </div>
-            <div class="col-md-8 text-end">
+            <div class="col-md-6 text-end">
                 <span id="tableMessage" class="text-success"></span>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle" id="teamsTable" style="font-size:0.98em;">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Supervisor</th>
-                        <th>Created</th>
-                        <th>Updated</th>
-                        <th style="width:110px;">Actions</th>
-                    </tr>
-                    <tr class="filter-row">
-                        <th><input type="text" class="form-control form-control-sm" id="filterName" placeholder="Filter name"></th>
-                        <th><select class="form-select form-select-sm" id="filterSupervisor"></select></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="teamsTbody">
-                    <!-- Data will be loaded here -->
-                </tbody>
-            </table>
+    </div>
+    
+    <div class="card-enhanced">
+        <div class="card-enhanced-header">
+            <h5 class="card-enhanced-title mb-0">Team Directory</h5>
         </div>
-        <div class="d-flex justify-content-between align-items-center mt-2">
-            <div>
-                <label>Show <select id="recordsPerPage" class="form-select form-select-sm d-inline-block" style="width:auto;">
-                    <option value="5">5</option>
-                    <option value="10" selected>10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                </select> entries</label>
+        <div class="card-enhanced-content p-0">
+            <div class="table-responsive">
+                <table class="table-enhanced" id="teamsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Supervisor</th>
+                            <th>Created</th>
+                            <th>Updated</th>
+                            <th style="width:110px;">Actions</th>
+                        </tr>
+                        <tr class="filter-row">
+                            <th><input type="text" class="form-control form-control-sm" id="filterName" placeholder="Filter name"></th>
+                            <th><select class="form-select form-select-sm" id="filterSupervisor"></select></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamsTbody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
             </div>
-            <nav>
-                <ul class="pagination pagination-sm mb-0" id="pagination"></ul>
-            </nav>
+            <div class="d-flex justify-content-between align-items-center p-3 border-top">
+                <div>
+                    <label class="text-muted">Show 
+                        <select id="recordsPerPage" class="form-select form-select-sm d-inline-block mx-1" style="width:auto;">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select> entries
+                    </label>
+                </div>
+                <nav>
+                    <ul class="pagination pagination-enhanced pagination-sm mb-0" id="pagination"></ul>
+                </nav>
+            </div>
         </div>
     </div>
-    <div class="card p-2 form-section" id="teamFormSection" style="display:none;">
-        <h5 id="formTitle" style="font-size:1.1rem;">Add Team</h5>
+    <div class="form-enhanced mt-4" id="teamFormSection" style="display:none;max-width:800px;margin-left:auto;margin-right:auto;">
+        <h5 id="formTitle" class="mb-4" style="font-size:1.25rem;font-weight:700;">Add Team</h5>
         <form id="teamForm" autocomplete="off">
             <input type="hidden" id="teamId">
-            <div class="row g-2">
+            <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label mb-1">Team Name <span class="text-danger">*</span></label>
+                    <label class="form-label">Team Name <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="teamName" required>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label mb-1">Supervisor <span class="text-danger">*</span></label>
+                    <label class="form-label">Supervisor <span class="text-danger">*</span></label>
                     <select id="teamSupervisor" class="form-select" required></select>
                 </div>
             </div>
-            <div class="row g-2 mt-2">
-                <div class="col-md-12">
-                    <label class="form-label mb-1">Team Members (Technicians)</label>
+            <div class="row g-3 mt-2">
+                <div class="col-12">
+                    <label class="form-label">Team Members (Technicians)</label>
                     <select id="teamMembers" class="form-select" multiple></select>
                 </div>
             </div>
-            <div class="mt-3 d-flex gap-2">
-                <button type="submit" class="btn btn-primary" id="saveTeamBtn">Save</button>
-                <button type="button" class="btn btn-secondary" id="cancelFormBtn">Cancel</button>
+            <div class="mt-4 d-flex gap-3">
+                <button type="submit" class="btn-enhanced btn-primary-enhanced" id="saveTeamBtn">Save Team</button>
+                <button type="button" class="btn-enhanced btn-outline-enhanced" id="cancelFormBtn">Cancel</button>
             </div>
-            <div id="formMessage"></div>
+            <div id="formMessage" class="alert-enhanced mt-3" style="display:none;"></div>
         </form>
     </div>
     <button class="floating-btn" id="addTeamBtn" title="Add Team">+</button>

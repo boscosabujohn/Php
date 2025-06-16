@@ -100,4 +100,11 @@ return [
     'error_deleting_permission' => 'Error deleting permission.',
     'all_required_fields' => 'All required fields must be filled.',
     'role_already_has_permission' => 'This role already has permissions for this route.',
+    'login_title' => 'Login',
+    'username' => 'Username',
+    'password' => 'Password',
+    'forgot_password' => 'Forgot Password?',
+    'login_button' => 'Login',
+    'or' => 'OR',
+    'guest_button' => 'Continue as guest',
 ];
